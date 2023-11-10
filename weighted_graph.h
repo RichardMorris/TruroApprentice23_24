@@ -9,7 +9,7 @@ public:
   std::string name;
 
   wnode(std::string n) : name{n} {}
-  void add_link(wnode * n, int d) {
+  void add_link(wnode* n, int d) {
     neighbors[n] = d;
   }
 
@@ -28,7 +28,7 @@ public:
   void add_node(wnode *n) {
     nodes.push_back(n);
   }
-  void add_edge(wnode *n1,wnode *n2, int d) {
+  void add_edge(wnode* n1,wnode *n2, int d) {
     n1->add_link(n2,d);
     n2->add_link(n1,d);
   }
@@ -38,4 +38,7 @@ public:
       ele->print();
     }
   }
+
+  // just a deleration
+  int dijkstra(wnode *start, wnode *end); 
 };
