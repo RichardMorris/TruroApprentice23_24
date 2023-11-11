@@ -26,12 +26,12 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 #find_package(Catch2 3 REQUIRED)
 
 # adds an executable named `tests`
-add_executable(shortest main.cpp weighted_graph.cpp)
+add_executable(graph_test testingcode.cpp weighted_graph.cpp)
 
 # These tests can use the Catch2-provided main
-target_link_libraries(shortest PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(graph_test PRIVATE Catch2::Catch2WithMain)
 
 include(CTest)
 include(Catch)
-catch_discover_tests(shortest)
+catch_discover_tests(graph_test)
 

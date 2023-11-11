@@ -20,6 +20,6 @@ int graph::dijkstra(wnode *start, wnode *end) {
     assert(dist[n] == 0);
     assert(prev[n] == nullptr);
   }
-}
+
   return 0;
 }
