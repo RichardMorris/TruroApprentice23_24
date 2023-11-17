@@ -17,7 +17,7 @@ TEST_CASE("Build graph")
   g.add_node(&C);
   g.add_node(&F);
   g.add_node(&T);
-  g.add_node(&F);
+  g.add_node(&A);
 
   g.add_edge(&R,&C,5);
   g.add_edge(&R,&T,10);
@@ -27,7 +27,7 @@ TEST_CASE("Build graph")
   
   int dist;
   dist = g.dijkstra(&C, &C);
-  REQUIRE( 0 == dist);
+  REQUIRE(0 == dist);
   dist = g.dijkstra(&R, &R);
   REQUIRE(0 == dist);
   dist = g.dijkstra(&T, &T);
@@ -36,6 +36,17 @@ TEST_CASE("Build graph")
   REQUIRE(0 == dist);
   dist = g.dijkstra(&A, &A);
   REQUIRE(0 == dist);
+
+  dist = g.dijkstra(&C, &R);
+  REQUIRE(5 == dist);
+  dist = g.dijkstra(&C, &T);
+  REQUIRE(15 == dist);
+  dist = g.dijkstra(&C, &F);
+  REQUIRE(23 == dist);
+  dist = g.dijkstra(&C, &A);
+  REQUIRE(35 == dist);
+
+
 }
 
 TEST_CASE("Collection times") {
