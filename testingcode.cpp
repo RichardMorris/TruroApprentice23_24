@@ -76,12 +76,66 @@ TEST_CASE("Collection times") {
     };
 }
 
+class CustomObject {
+public:
+    int key1;
+    int key2;
+
+    CustomObject(int k1, int k2) : key1(k1), key2(k2) {}
+
+    // Define hash function
+    size_t hash() const {
+        // You can use any suitable hash function here
+        return std::hash<int>()(key1) ^ std::hash<int>()(key2);
+    }
+
+    // Define equality operator
+    bool operator==(const CustomObject& other) const {
+        return (key1 == other.key1) && (key2 == other.key2);
+    }
+};
+
+struct KeyHash
+{
+    std::size_t operator()(const CustomObject& k) const
+    {
+        return k.hash();
+    }
+};
+ 
+struct KeyEqual
+{
+    bool operator()(const CustomObject& lhs, const CustomObject& rhs) const
+    {
+        return lhs == rhs;
+    }
+};
+
+
+template<> struct std::hash<CustomObject> {
+    std::size_t operator()(CustomObject const& s) const noexcept {
+        std::size_t h1 = std::hash<int>{}(s.key1);
+        std::size_t h2 = std::hash<int>{}(s.key2);
+        return h1 ^ (h2 << 1); // or use boost::hash_combine (see Discussion) https://en.cppreference.com/w/Talk:cpp/utility/hash
+    }
+};
+
 TEST_CASE("Hash table") {
-     std::unordered_map<std::string, std::string> my_map;
+    std::unordered_map<std::string, std::string> my_map;
 
     my_map["foo"] = "bar";
 
     REQUIRE(my_map["foo"] == "bar");
+
+    CustomObject cu(45,67);
+    //std::unordered_map<CustomObject, std::string,KeyHash,KeyEqual> map2 = {};
+    std::unordered_map<CustomObject,std::string> map2;
+
+    map2[cu] = "foobar";
+    REQUIRE(map2[cu] == "foobar");
+
+
+
 }
 
 
