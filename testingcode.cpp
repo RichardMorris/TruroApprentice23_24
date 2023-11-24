@@ -3,6 +3,8 @@ using namespace std;
 #include <catch2/catch_all.hpp>
 #include <algorithm>    // std::fill
 #include <vector>       // std::vector
+#include <map>
+#include <unordered_map> 
 
 TEST_CASE("Build graph")
 {
@@ -65,14 +67,21 @@ TEST_CASE("Collection times") {
     std::uniform_int_distribution<int> distribution(lower_bound, upper_bound);
 
     BENCHMARK("Build random vector") {
-    while (randomNumbers.size() < size) {
-        int randomNum = distribution(gen);
-        if (std::find(randomNumbers.begin(), randomNumbers.end(), randomNum) == randomNumbers.end()) {
-            randomNumbers.push_back(randomNum);
+        while (randomNumbers.size() < size) {
+            int randomNum = distribution(gen);
+            if (std::find(randomNumbers.begin(), randomNumbers.end(), randomNum) == randomNumbers.end()) {
+                randomNumbers.push_back(randomNum);
+            }
         }
-    }
     };
-
-
 }
+
+TEST_CASE("Hash table") {
+     std::unordered_map<std::string, std::string> my_map;
+
+    my_map["foo"] = "bar";
+
+    REQUIRE(my_map["foo"] == "bar");
+}
+
 
