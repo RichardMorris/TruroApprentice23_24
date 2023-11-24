@@ -121,11 +121,6 @@ template<> struct std::hash<CustomObject> {
 };
 
 TEST_CASE("Hash table") {
-    std::unordered_map<std::string, std::string> my_map;
-
-    my_map["foo"] = "bar";
-
-    REQUIRE(my_map["foo"] == "bar");
 
     CustomObject cu(45,67);
     //std::unordered_map<CustomObject, std::string,KeyHash,KeyEqual> map2 = {};
@@ -134,6 +129,40 @@ TEST_CASE("Hash table") {
     map2[cu] = "foobar";
     REQUIRE(map2[cu] == "foobar");
 
+    std::cout << "buckets " << map2.bucket_count() << " loadFactor " << map2.load_factor() << std::endl;
+
+
+    const int size = 100; // Size of the vector
+    const int lower_bound = 1; // Lower bound of the random numbers
+    const int upper_bound = 100000; // Upper bound of the random numbers
+
+    // Seed for the random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // Generate a vector of unique random numbers
+    std::vector<int> randomNumbers;
+    randomNumbers.reserve(size);
+
+    std::uniform_int_distribution<int> distribution(lower_bound, upper_bound);
+    while (randomNumbers.size() < size) {
+        int randomNum = distribution(gen);
+        if (std::find(randomNumbers.begin(), randomNumbers.end(), randomNum) == randomNumbers.end()) {
+            randomNumbers.push_back(randomNum);
+        }
+    }
+
+
+    std::unordered_map<int, int> my_map;
+
+    std::cout << "buckets " << my_map.bucket_count() << " loadFactor " << my_map.load_factor() << std::endl;
+
+    int count=0;
+    for(auto n : randomNumbers) {
+        ++count;
+        my_map[n] = n*n;
+        std::cout << count << " buckets " << my_map.bucket_count() << " loadFactor " << my_map.load_factor() << std::endl;
+    }
 
 
 }
