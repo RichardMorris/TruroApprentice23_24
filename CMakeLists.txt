@@ -8,6 +8,7 @@ project(Graphs  VERSION 0.1)
 # and the variable CMAKE_CXX_STANDARD_REQUIRED to True
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "-g") 
 
 # download the Catch2 libary from git 
 Include(FetchContent)
