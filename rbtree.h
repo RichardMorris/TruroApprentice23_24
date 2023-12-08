@@ -16,14 +16,14 @@ public:
         right = nullptr;
         color = red;
     }
-    rbnode* insert(int val) {
+    rbnode* insert_raw(int val) {
         if(val <= this->val) {
             if(left == nullptr) {
                 left = new rbnode(val);
                 left->parent = this;
                 return left;
             } else {
-                return left->insert(val);
+                return left->insert_raw(val);
             }
         } else {
             if(right == nullptr) {
@@ -31,7 +31,7 @@ public:
                 right->parent = this;
                 return right;
             } else {
-                return right->insert(val);
+                return right->insert_raw(val);
             }
         }
     }
@@ -159,6 +159,17 @@ class rbtree {
     rbnode* root = nullptr;
 
 public:
+    rbnode* insert_raw(int val) {
+        if(root == nullptr) {
+            root = new rbnode(val);
+            root->set_black();
+            root->set_parent(nullptr);
+            return root;
+        } else {
+            return root->insert_raw(val);
+        }
+    };
+
     rbnode* insert(int val) {
         if(root == nullptr) {
             root = new rbnode(val);
@@ -166,10 +177,12 @@ public:
             root->set_parent(nullptr);
             return root;
         } else {
-            return root->insert(val);
+            rbnode * node = root->insert_raw(val);
+            addFixup(node);
+            return node;
         }
     };
-    
+
     // method to return a sorted list of all values in the tree
     // EJ Item 54: Return empty collections or arrays, not nulls
     std::vector<int> get_vals() {
@@ -218,6 +231,7 @@ public:
     }
 
     void addFixup(rbnode* node) {
+        while(node->get_colour()==red) {
         // if node is root, set it to black and return
         if(node == root) {
             node->set_black();
@@ -258,7 +272,7 @@ public:
             parent->set_black();
             uncle->set_black();
             grandparent->set_red();
-            addFixup(grandparent);
+            
             return;
         }
         //  If the uncle is black, we need to rotate
@@ -281,7 +295,7 @@ public:
             parent->set_black();
             grandparent->set_red();
             rotateRight(parent,grandparent);
-            return;
+            ;
         }
 
         //  Case 2: parent is left child of grandparent and node is right child of parent
@@ -294,8 +308,7 @@ public:
         //                         
         if(parent == grandparent->get_left() && node == parent->get_right()) {
             rotateLeft(node,parent);
-            addFixup(parent);
-            return;
+            node = parent;
         }
         // case 3: parent is right child of grandparent and node is left child of parent
         //       G=B                 G=B
@@ -304,12 +317,8 @@ public:
         //          /   \               /  \ 
         //         N     S             P    S
         if(parent == grandparent->get_right() && node == parent->get_left()) {
-            //dump();
             rotateRight(node,parent);
-            //dump();
-            addFixup(parent);
-            //dump();
-            return;
+            node = parent;    
         }
 
         // case 4: parent is right child of grandparent and node is right child of parent
@@ -319,14 +328,13 @@ public:
         //          /   \         /  \ 
         //         C     N*      U=B   C
         if(parent == grandparent->get_right() && node == parent->get_right()) {
-            //std::cout << "case 4" << std::endl;
             parent->set_black();
             grandparent->set_red();
             rotateLeft(parent,grandparent);
             //addFixup(parent);
-            return;
+            node = grandparent;
         }
-
+        }
     }
     // Swap the child of a parent from A to B
     // If parent is null, then A is the root    

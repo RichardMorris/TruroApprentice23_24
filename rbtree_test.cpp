@@ -28,7 +28,7 @@ TEST_CASE("RBnode has no left or right")
 TEST_CASE("Insert lower val into rbnode")
 {
     rbnode R(7);
-    R.insert(5);
+    R.insert_raw(5);
     REQUIRE(R.get_val() == 7);
     REQUIRE(R.get_left() != nullptr);
     REQUIRE(R.get_right() == nullptr);
@@ -39,7 +39,7 @@ TEST_CASE("Insert lower val into rbnode")
 TEST_CASE("Insert equal val into rbnode is on left")
 {
     rbnode R(7);
-    R.insert(7);
+    R.insert_raw(7);
     REQUIRE(R.get_val() == 7);
     REQUIRE(R.get_left() != nullptr);
     REQUIRE(R.get_right() == nullptr);
@@ -49,7 +49,7 @@ TEST_CASE("Insert equal val into rbnode is on left")
 TEST_CASE("Insert higher val into rbnode is on right")
 {
     rbnode R(7);
-    R.insert(11);
+    R.insert_raw(11);
     REQUIRE(R.get_val() == 7);
     REQUIRE(R.get_left() == nullptr);
     REQUIRE(R.get_right() != nullptr);
@@ -84,20 +84,20 @@ TEST_CASE( "Single RBnode is a leaf") {
 
 TEST_CASE( "RBnode with left child is not a leaf") {
     rbnode R(7);
-    R.insert(5);
+    R.insert_raw(5);
     REQUIRE(!R.is_leaf());
 }
 
 TEST_CASE( "RBnode with right child is not a leaf") {
     rbnode R(7);
-    R.insert(11);
+    R.insert_raw(11);
     REQUIRE(!R.is_leaf());
 }
 
 TEST_CASE( "RBnode with left and right child is not a leaf") {
     rbnode R(7);
-    R.insert(5);
-    R.insert(11);
+    R.insert_raw(5);
+    R.insert_raw(11);
     REQUIRE(!R.is_leaf());
 }
 
@@ -172,13 +172,13 @@ TEST_CASE("Tree with 0 else passes no adjacent red test")
 TEST_CASE("Insert root into tree")
 {
     rbtree tree;
-    tree.insert(1);
+    tree.insert_raw(1);
 }
 
 TEST_CASE("Tree with 1 ele has 1 val")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     vector<int> vals = tree.get_vals();
     REQUIRE(vals[0] == 7);
     REQUIRE(vals.size() == 1);
@@ -187,7 +187,7 @@ TEST_CASE("Tree with 1 ele has 1 val")
 TEST_CASE("Tree with 1 ele has a root element which is black")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.get_root() != nullptr);
     rbnode* root = tree.get_root();
     REQUIRE(root->get_val() == 7);
@@ -199,57 +199,57 @@ TEST_CASE("Tree with 1 ele has a root element which is black")
 TEST_CASE("Tree with 1 elements has min_black_depth 1")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.get_min_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 1 elements has max_black_depth 1")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.get_max_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 1 else passes black depth test")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.black_depth_test());
 }
 
 TEST_CASE("Tree with 1 else passes no adjacent red test")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.no_adjacent_red_test());
 }
 
 TEST_CASE("Parent of tree with 1 ele is nullptr")
 {
     rbtree tree;
-    tree.insert(7);
+    tree.insert_raw(7);
     REQUIRE(tree.get_root()->get_parent() == nullptr);
 }
 
 TEST_CASE("Insert 2 in order eles into tree")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
 }
 
 TEST_CASE("Insert 2 out of order eles into tree")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
 }
 
 TEST_CASE("Tree with 2 in order ele has vals in order")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     vector<int> vals = tree.get_vals();
     REQUIRE(vals.size() == 2);
     REQUIRE(vals[0] == 5);
@@ -259,8 +259,8 @@ TEST_CASE("Tree with 2 in order ele has vals in order")
 TEST_CASE("Tree with 2 out of order ele has vals in order")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
     vector<int> vals = tree.get_vals();
     REQUIRE(vals.size() == 2);
     REQUIRE(vals[0] == 5);
@@ -270,48 +270,48 @@ TEST_CASE("Tree with 2 out of order ele has vals in order")
 TEST_CASE("Tree with 2 eles has min_black_depth 1")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.get_min_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 2 eles has max_black_depth 1")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.get_max_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 2 eles reversed has min_black_depth 1")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
     REQUIRE(tree.get_min_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 2 eles reversed has max_black_depth 1")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
     REQUIRE(tree.get_max_black_depth() == 1);
 }
 
 TEST_CASE("Tree with 2 eles passes black depth test")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.black_depth_test());
 }
 
 TEST_CASE("Tree with 2 eles has black-red colours")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.get_root()->get_colour() == black);
     REQUIRE(tree.get_root()->get_right()->get_colour() == red);
 }
@@ -319,8 +319,8 @@ TEST_CASE("Tree with 2 eles has black-red colours")
 TEST_CASE("Tree with 2 eles reversed has black-red colours")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
     REQUIRE(tree.get_root()->get_colour() == black);
     REQUIRE(tree.get_root()->get_left()->get_colour() == red);
 }
@@ -328,16 +328,16 @@ TEST_CASE("Tree with 2 eles reversed has black-red colours")
 TEST_CASE("Tree with 2 eles passes no adjacent red test")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.no_adjacent_red_test());
 }
 
 TEST_CASE("Three with 2 ele has parent of right child as root and parent of root as nullptr")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     REQUIRE(tree.get_root()->get_right()->get_parent() == tree.get_root());
     REQUIRE(tree.get_root()->get_parent() == nullptr);    
 }
@@ -345,9 +345,9 @@ TEST_CASE("Three with 2 ele has parent of right child as root and parent of root
 TEST_CASE("Insert 3 eles into tree")
 {
     rbtree tree;
-    tree.insert(1);
-    tree.insert(2);
-    tree.insert(3);
+    tree.insert_raw(1);
+    tree.insert_raw(2);
+    tree.insert_raw(3);
 }
 
 TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 has vals in order")
@@ -363,9 +363,9 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 has vals in orde
 
     for(int i=0; i<6; i++) {
         rbtree tree;
-        tree.insert(vals[i][0]);
-        tree.insert(vals[i][1]);
-        tree.insert(vals[i][2]);
+        tree.insert_raw(vals[i][0]);
+        tree.insert_raw(vals[i][1]);
+        tree.insert_raw(vals[i][2]);
         vector<int> res = tree.get_vals();
         // require vector has elements 5, 7, 11
         REQUIRE(res.size() == 3);
@@ -378,9 +378,9 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 has vals in orde
 TEST_CASE("Tree with 3 eles 5,7,11 is right leaning with colours black, red, red and fails red test")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(7);
-    tree.insert(11);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
+    tree.insert_raw(11);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 5);
     REQUIRE(tree.get_root()->get_right()->get_val() == 7 );
@@ -394,9 +394,9 @@ TEST_CASE("Tree with 3 eles 5,7,11 is right leaning with colours black, red, red
 TEST_CASE("Tree with 3 eles 5,11,7 is R L colours black, red, red and fails red test")
 {
     rbtree tree;
-    tree.insert(5);
-    tree.insert(11);
-    tree.insert(7);
+    tree.insert_raw(5);
+    tree.insert_raw(11);
+    tree.insert_raw(7);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 5);
     REQUIRE(tree.get_root()->get_right()->get_val() == 11 );
@@ -410,9 +410,9 @@ TEST_CASE("Tree with 3 eles 5,11,7 is R L colours black, red, red and fails red 
 TEST_CASE("Tree with 3 eles 7,5,11 is balanced with colours black, red, red and passes red test")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(5);
-    tree.insert(11);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
+    tree.insert_raw(11);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 7);
     REQUIRE(tree.get_root()->get_left()->get_val() == 5 );
@@ -426,9 +426,9 @@ TEST_CASE("Tree with 3 eles 7,5,11 is balanced with colours black, red, red and 
 TEST_CASE("Tree with 3 eles 7,11,5 is balanced with colours black, red, red and passes red test")
 {
     rbtree tree;
-    tree.insert(7);
-    tree.insert(11);
-    tree.insert(5);
+    tree.insert_raw(7);
+    tree.insert_raw(11);
+    tree.insert_raw(5);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 7);
     REQUIRE(tree.get_root()->get_left()->get_val() == 5 );
@@ -443,9 +443,9 @@ TEST_CASE("Tree with 3 eles 7,11,5 is balanced with colours black, red, red and 
 TEST_CASE("Tree with 3 eles 11,5,7 is left-right with colours black, red, red and fails red test")
 {
     rbtree tree;
-    tree.insert(11);
-    tree.insert(5);
-    tree.insert(7);
+    tree.insert_raw(11);
+    tree.insert_raw(5);
+    tree.insert_raw(7);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 11);
     REQUIRE(tree.get_root()->get_left()->get_val() == 5 );
@@ -459,9 +459,9 @@ TEST_CASE("Tree with 3 eles 11,5,7 is left-right with colours black, red, red an
 TEST_CASE("Tree with 3 eles 11,7,5 is left-left with colours black, red, red and fails red test")
 {
     rbtree tree;
-    tree.insert(11);
-    tree.insert(7);
-    tree.insert(5);
+    tree.insert_raw(11);
+    tree.insert_raw(7);
+    tree.insert_raw(5);
     rbnode* root = tree.get_root();
     REQUIRE(tree.get_root()->get_val() == 11);
     REQUIRE(tree.get_root()->get_left()->get_val() == 7 );
@@ -493,9 +493,9 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 gives expected r
 
     for(int i=0; i<6; i++) {
         rbtree tree;
-        tree.insert(vals[i][0]);
-        tree.insert(vals[i][1]);
-        tree.insert(vals[i][2]);
+        tree.insert_raw(vals[i][0]);
+        tree.insert_raw(vals[i][1]);
+        tree.insert_raw(vals[i][2]);
         vector<int> res = tree.get_vals();
         REQUIRE(tree.no_adjacent_red_test() == expected[i]);
     }
@@ -514,9 +514,9 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 passes black tes
 
     for(int i=0; i<6; i++) {
         rbtree tree;
-        tree.insert(vals[i][0]);
-        tree.insert(vals[i][1]);
-        tree.insert(vals[i][2]);
+        tree.insert_raw(vals[i][0]);
+        tree.insert_raw(vals[i][1]);
+        tree.insert_raw(vals[i][2]);
         vector<int> res = tree.get_vals();
         REQUIRE(tree.black_depth_test());
     }
@@ -524,9 +524,9 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 passes black tes
 
 TEST_CASE("fixup on 3 ele LL tree") {
     rbtree tree;
-    rbnode* gp = tree.insert(11);
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(5);
+    rbnode* gp = tree.insert_raw(11);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(5);
 
     REQUIRE(tree.get_root() == gp);
     REQUIRE(tree.get_root()->get_left() == p );
@@ -534,11 +534,8 @@ TEST_CASE("fixup on 3 ele LL tree") {
     REQUIRE(gp->get_colour() == black);
     REQUIRE(p->get_colour() == red);
     REQUIRE(node->get_colour() == red);    
-    std::cout << "before red test" << std::endl;
     REQUIRE_FALSE(tree.no_adjacent_red_test());
-    std::cout << "before fixup" << std::endl;
     tree.addFixup(node);
-    std::cout << "after fixup" << std::endl;
     REQUIRE(tree.get_root() == p);
     REQUIRE(tree.get_root()->get_left() == node );
     REQUIRE(tree.get_root()->get_right() == gp);
@@ -552,11 +549,12 @@ TEST_CASE("fixup on 3 ele LL tree") {
 
 TEST_CASE("fixup on 4 ele LLL tree") {
     rbtree tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(11);
+    rbnode* a = tree.insert_raw(13);
+
+    rbnode* gp = tree.insert_raw(11);
     gp->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(5);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(5);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(tree.get_root()->get_left() == gp );
@@ -579,15 +577,16 @@ TEST_CASE("fixup on 4 ele LLL tree") {
     REQUIRE( node->get_colour() == red);
 
     REQUIRE(tree.no_adjacent_red_test());
+    //REQUIRE(tree.black_depth_test());
 }
 
 TEST_CASE("fixup on 4 ele RLL tree") {
     rbtree tree;
-    rbnode* a = tree.insert(3);
-    rbnode* gp = tree.insert(11);
+    rbnode* a = tree.insert_raw(3);
+    rbnode* gp = tree.insert_raw(11);
     gp->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(5);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(5);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_right() == gp );
@@ -614,14 +613,14 @@ TEST_CASE("fixup on 4 ele RLL tree") {
 
 TEST_CASE("fixup on 4 ele LL tree with sibling and uncle") {
     rbtree tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(11);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(11);
     gp->set_black();
-    rbnode *u = tree.insert(12);
+    rbnode *u = tree.insert_raw(12);
     u->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode* s = tree.insert(8);
-    rbnode* node = tree.insert(5);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* s = tree.insert_raw(8);
+    rbnode* node = tree.insert_raw(5);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp );
@@ -654,12 +653,12 @@ TEST_CASE("fixup on 4 ele LL tree with sibling and uncle") {
 
 TEST_CASE("fixup on right red uncle clase") {
     rbtree  tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(11);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(11);
     gp->set_black();
-    rbnode *u = tree.insert(12);
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(5);
+    rbnode *u = tree.insert_raw(12);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(5);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp );
@@ -690,12 +689,12 @@ TEST_CASE("fixup on right red uncle clase") {
 
 TEST_CASE("fixup on left red uncle clase") {
     rbtree  tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(7);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(7);
     gp->set_black();
-    rbnode *u = tree.insert(5);
-    rbnode *p = tree.insert(11);
-    rbnode* node = tree.insert(9);
+    rbnode *u = tree.insert_raw(5);
+    rbnode *p = tree.insert_raw(11);
+    rbnode* node = tree.insert_raw(9);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp );
@@ -726,11 +725,11 @@ TEST_CASE("fixup on left red uncle clase") {
 
 TEST_CASE("fixup on left red uncle clase where gp is root") {
     rbtree  tree;
-    rbnode* gp = tree.insert(7);
+    rbnode* gp = tree.insert_raw(7);
     gp->set_black();
-    rbnode *u = tree.insert(5);
-    rbnode *p = tree.insert(11);
-    rbnode* node = tree.insert(9);
+    rbnode *u = tree.insert_raw(5);
+    rbnode *p = tree.insert_raw(11);
+    rbnode* node = tree.insert_raw(9);
 
     REQUIRE(tree.get_root() == gp);
     REQUIRE(gp->get_right() == p);
@@ -769,12 +768,12 @@ TEST_CASE("fixup on left red uncle clase where gp is root") {
 
 TEST_CASE("RotateRight tree with ancestor") {
     rbtree tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(11);
-    rbnode* u = tree.insert(12);
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(5);
-    rbnode* s = tree.insert(9);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(11);
+    rbnode* u = tree.insert_raw(12);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(5);
+    rbnode* s = tree.insert_raw(9);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp );
@@ -818,12 +817,12 @@ TEST_CASE("RotateRight tree with ancestor") {
 
 TEST_CASE("RotateLeft tree with ancestor") {
     rbtree tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(7);
-    rbnode* u = tree.insert(5);
-    rbnode *p = tree.insert(11);
-    rbnode* s = tree.insert(9);
-    rbnode* node = tree.insert(12);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(7);
+    rbnode* u = tree.insert_raw(5);
+    rbnode *p = tree.insert_raw(11);
+    rbnode* s = tree.insert_raw(9);
+    rbnode* node = tree.insert_raw(12);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp );
@@ -859,14 +858,14 @@ TEST_CASE("RotateLeft tree with ancestor") {
 //                
 TEST_CASE("fixup on left-right case where gp is root") {
     rbtree  tree;
-    rbnode* gp = tree.insert(9);
-    rbnode *u = tree.insert(11);
+    rbnode* gp = tree.insert_raw(9);
+    rbnode *u = tree.insert_raw(11);
     u->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode *s = tree.insert(5);
+    rbnode *p = tree.insert_raw(7);
+    rbnode *s = tree.insert_raw(5);
     s->set_black();
 
-    rbnode* node = tree.insert(8);
+    rbnode* node = tree.insert_raw(8);
 
     REQUIRE(tree.get_root() == gp);
     REQUIRE(gp->get_left() == p);
@@ -896,13 +895,13 @@ TEST_CASE("fixup on left-right case where gp is root") {
 
 TEST_CASE("fixup on left-right case where gp has ancestor") {
     rbtree  tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(9);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(9);
     gp->set_black();
-    rbnode *u = tree.insert(11);
+    rbnode *u = tree.insert_raw(11);
     u->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode* node = tree.insert(8);
+    rbnode *p = tree.insert_raw(7);
+    rbnode* node = tree.insert_raw(8);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp);
@@ -933,14 +932,14 @@ TEST_CASE("fixup on left-right case where gp has ancestor") {
 
 TEST_CASE("fixup on right-left case where gp has ancestor") {
     rbtree  tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(9);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(9);
     gp->set_black();
-    rbnode *u = tree.insert(7);
+    rbnode *u = tree.insert_raw(7);
     u->set_black();
-    rbnode *p = tree.insert(11);
-    rbnode *s = tree.insert(12);
-    rbnode* node = tree.insert(10);
+    rbnode *p = tree.insert_raw(11);
+    rbnode *s = tree.insert_raw(12);
+    rbnode* node = tree.insert_raw(10);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp);
@@ -972,14 +971,14 @@ TEST_CASE("fixup on right-left case where gp has ancestor") {
 
 TEST_CASE("fixup on right-right case where gp has ancestor") {
     rbtree  tree;
-    rbnode* a = tree.insert(13);
-    rbnode* gp = tree.insert(9);
+    rbnode* a = tree.insert_raw(13);
+    rbnode* gp = tree.insert_raw(9);
     gp->set_black();
-    rbnode *u = tree.insert(11);
+    rbnode *u = tree.insert_raw(11);
     u->set_black();
-    rbnode *p = tree.insert(7);
-    rbnode *s = tree.insert(5);
-    rbnode* node = tree.insert(8);
+    rbnode *p = tree.insert_raw(7);
+    rbnode *s = tree.insert_raw(5);
+    rbnode* node = tree.insert_raw(8);
 
     REQUIRE(tree.get_root() == a);
     REQUIRE(a->get_left() == gp);
@@ -1005,5 +1004,38 @@ TEST_CASE("fixup on right-right case where gp has ancestor") {
 
     //REQUIRE(tree.no_adjacent_red_test());
     //REQUIRE(tree.black_depth_test());
+}
 
+TEST_CASE("insert & fixup on 3 5 7 9") {
+    rbtree  tree;
+    rbnode* a = tree.insert(3);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* b = tree.insert(5);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* c = tree.insert(7);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* d = tree.insert(9);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+
+}
+
+TEST_CASE("insert and fixup on 9 7 5 3")
+{
+    rbtree  tree;
+    rbnode* a = tree.insert(9);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* b = tree.insert(7);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* c = tree.insert(5);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());
+    rbnode* d = tree.insert(3);
+    REQUIRE(tree.no_adjacent_red_test());
+    REQUIRE(tree.black_depth_test());   
 }
