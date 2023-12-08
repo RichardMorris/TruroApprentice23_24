@@ -245,8 +245,12 @@ public:
         //  R*  R     R*  N    N  R
         // None of which violate the red-black tree properties
 
-        if(parent->get_colour() == black) {
-            return;
+        if(parent->get_colour() == black) { // ensure left leaning
+            node->set_black();
+            parent->set_red();
+            rotateLeft(node,parent);
+            node = parent;
+            parent = node->get_parent();
         }
         // Now get the grandparent and uncle
         rbnode* grandparent = parent->get_parent();
@@ -332,7 +336,7 @@ public:
             grandparent->set_red();
             rotateLeft(parent,grandparent);
             //addFixup(parent);
-            node = grandparent;
+            node = parent;
         }
         }
     }
