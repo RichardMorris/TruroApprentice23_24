@@ -1,6 +1,6 @@
 #include <iostream>
 #include<vector>
-
+#include <limits>
 enum rbcolor { red, black };
 
 class rbnode {
@@ -86,12 +86,28 @@ public:
         color = red;
     }
 
+    void set_colour(rbcolor c) {
+        color = c;
+    }
     bool is_leaf() {
         return left == nullptr && right == nullptr;
     }
 
+    // get the depth of the tree
+    int get_depth() {
+        int ldepth = 0;
+        int rdepth = 0;
+        if(left != nullptr) {
+            ldepth = left->get_depth();
+        }
+        if(right != nullptr) {
+            rdepth = right->get_depth();
+        }
+        return 1 + (ldepth > rdepth ? ldepth : rdepth);
+    }
+
     int get_min_black_depth() {
-        int min=0;
+        int min= INT_MAX;
         if(left != nullptr) {
             int lmin = left->get_min_black_depth();
             min = lmin < min ? lmin : min;
@@ -99,7 +115,10 @@ public:
         if(right != nullptr) {
             int rmin = right->get_min_black_depth();
             min = rmin < min ? rmin : min;
-        }   
+        }
+        if(min == INT_MAX) {
+            min = 0;
+        }
         if(color == black) {
             min++;
         }
@@ -142,15 +161,15 @@ public:
     }
 
     void dump(int depth) {
+        if(right != nullptr) {
+            right->dump(depth+1);
+        }
         for(int i=0;i<depth;i++) {
             std::cout << "  ";
         }
         std::cout << val << " " << (color == red ? "red" : "black") << std::endl;
         if(left != nullptr) {
             left->dump(depth+1);
-        }
-        if(right != nullptr) {
-            right->dump(depth+1);
         }
     }
 };
@@ -230,114 +249,163 @@ public:
         return true;
     }
 
-    void addFixup(rbnode* node) {
+    // swap the colours on nodes A and B
+    void swapColours(rbnode *A, rbnode *B) {
+        auto tmp = A->get_colour();
+        A->set_colour(B->get_colour());
+        B->set_colour(tmp);
+    }
+
+void flipLeft(rbnode *parent) {
+    swapColours(parent->get_right(), parent);
+    rotateLeft(parent->get_right(), parent);
+}
+
+void flipRight(rbnode *parent) {
+    swapColours(parent->get_left(), parent);
+    rotateRight(parent->get_left(), parent);
+}
+
+void pushBlack(rbnode *parent) {
+    parent->set_red();
+    parent->get_left()->set_black();
+    parent->get_right()->set_black();
+}   
+
+void addFixup(rbnode* u) {
+        while (u->get_colour() == red) {
+            if (u == root) { // u is the root - done
+                u->set_black();
+                return;
+            }
+            rbnode* parent = u->get_parent();
+            if (parent->get_left()==nullptr || parent->get_left()->get_colour() == black) { // ensure left-leaning
+                flipLeft(parent);
+                u = parent;
+                parent = u->get_parent();
+            }
+            if (parent->get_colour() == black)
+                return; // no red-red edge = done
+
+            rbnode* g = parent->get_parent(); // grandparent of u
+            if (g->get_right()==nullptr || g->get_right()->get_colour() == black) {
+                flipRight(g);
+                return;
+            } else {
+                pushBlack(g);
+                u = g;
+            }
+        }
+    }
+
+    void addFixupOld(rbnode* node) {
         while(node->get_colour()==red) {
-        // if node is root, set it to black and return
-        if(node == root) {
-            node->set_black();
-            return;
-        }
-        rbnode* parent = node->get_parent();
-        // if parent is black, return
-        // We have the situations: *is node we just inserted
-        //    B         B       B                
-        //   / \       / \     / \ 
-        //  R*  R     R*  N    N  R
-        // None of which violate the red-black tree properties
+            // if node is root, set it to black and return
+            if(node == root) {
+                node->set_black();
+                return;
+            }
+            rbnode* parent = node->get_parent();
+            // if parent is black, return
+            // We have the situations: *is node we just inserted
+            //    B         B       B                
+            //   / \       / \     / \ 
+            //  R*  R     R*  N    N  R
+            // None of which violate the red-black tree properties
 
-        if(parent->get_colour() == black) { // ensure left leaning
-            node->set_black();
-            parent->set_red();
-            rotateLeft(node,parent);
-            node = parent;
-            parent = node->get_parent();
-        }
-        // Now get the grandparent and uncle
-        rbnode* grandparent = parent->get_parent();
-        rbnode* uncle = grandparent->get_left() == parent 
-            ? grandparent->get_right() 
-            : grandparent->get_left();
-        // We have the situations:
-        //       G
-        //      / \ 
-        //     P   U
-        //    / \ 
-        //   ?   R*
+            if(parent->get_colour() == black) { // ensure left leaning
+                node->set_black();
+                parent->set_red();
+                rotateLeft(node,parent);
+                node = parent;
+                parent = node->get_parent();
+            }
+            // Now get the grandparent and uncle
+            rbnode* grandparent = parent->get_parent();
+            rbnode* uncle = grandparent->get_left() == parent 
+                ? grandparent->get_right() 
+                : grandparent->get_left();
+            // We have the situations:
+            //       G
+            //      / \ 
+            //     P   U
+            //    / \ 
+            //   ?   R*
 
-        //  If the uncle is red, we can just recolour
-        //       G=B                 G=R
-        //      /   \               /   \ 
-        //     P=R   U=R    =>     P=B   U=B
-        //    / \                  / \                     
-        //   ?   R*               ?   R*
-        //  The black heights of both parent and uncle are unchanged
-        //  and the black height of the grandparent is unchanged
-        if(uncle != nullptr && uncle->get_colour() == red) {
-            parent->set_black();
-            uncle->set_black();
-            grandparent->set_red();
-            
-            return;
-        }
-        //  If the uncle is black, we need to rotate
+            //  If the uncle is red, we can just recolour
+            //       G=B                 G=R
+            //      /   \               /   \ 
+            //     P=R   U=R    =>     P=B   U=B
+            //    / \                  / \                     
+            //   ?   R*               ?   R*
+            //  The black heights of both parent and uncle are unchanged
+            //  and the black height of the grandparent is unchanged
+            if(uncle != nullptr && uncle->get_colour() == red) {
+                parent->set_black();
+                uncle->set_black();
+                grandparent->set_red();
+                
+                return;
+            }
+            //  If the uncle is black, we need to rotate
 
-        //  There are four cases 
-        //  Case 1: parent is left child of grandparent and node is left child of parent
-        //       G=B                 P=B
-        //      /   \               /   \ 
-        //     P=R   U=B    =>     R*   G=R
-        //    /   \                     /  \ 
-        //   R*    C                  C    U=B
+            //  There are four cases 
+            //  Case 1: parent is left child of grandparent and node is left child of parent
+            //       G=B                 P=B
+            //      /   \               /   \ 
+            //     P=R   U=B    =>     R*   G=R
+            //    /   \                     /  \ 
+            //   R*    C                  C    U=B
 
-        //  The black height of the parent is unchanged
-        //  The black height of the grandparent is unchanged
-        //  The black height of the uncle is unchanged
-        //  The black height of the node is unchanged
-        //  The black height of the node's sibling is unchanged
+            //  The black height of the parent is unchanged
+            //  The black height of the grandparent is unchanged
+            //  The black height of the uncle is unchanged
+            //  The black height of the node is unchanged
+            //  The black height of the node's sibling is unchanged
 
-        if(parent == grandparent->get_left() && node == parent->get_left()) {
-            parent->set_black();
-            grandparent->set_red();
-            rotateRight(parent,grandparent);
-            ;
-        }
+            if(parent == grandparent->get_left() && node == parent->get_left()) {
+                parent->set_black();
+                grandparent->set_red();
+                rotateRight(parent,grandparent);
+                ;
+            }
 
-        //  Case 2: parent is left child of grandparent and node is right child of parent
-        //       G=B                 G=B
-        //      /   \               /   \ 
-        //     P=R   U=B    =>     N    U=B
-        //    /   \               /  \ 
-        //   S     N=R                P
-        //                        
-        //                         
-        if(parent == grandparent->get_left() && node == parent->get_right()) {
-            rotateLeft(node,parent);
-            node = parent;
-        }
-        // case 3: parent is right child of grandparent and node is left child of parent
-        //       G=B                 G=B
-        //      /   \               /   \ 
-        //     U=B   P=R    =>     U=B   N
-        //          /   \               /  \ 
-        //         N     S             P    S
-        if(parent == grandparent->get_right() && node == parent->get_left()) {
-            rotateRight(node,parent);
-            node = parent;    
-        }
+            //  Case 2: parent is left child of grandparent and node is right child of parent
+            //       G=B                 G=B
+            //      /   \               /   \ 
+            //     P=R   U=B    =>     N    U=B
+            //    /   \               /  \ 
+            //   S     N=R                P
+            //                        
+            //                         
+            if(parent == grandparent->get_left() && node == parent->get_right()) {
+                rotateLeft(node,parent);
+                node = parent;
+            }
+            // case 3: parent is right child of grandparent and node is left child of parent
+            //       G=B                 G=B
+            //      /   \               /   \ 
+            //     U=B   P=R    =>     U=B   N
+            //          /   \               /  \ 
+            //         N     S             P    S
+            if(parent == grandparent->get_right() && node == parent->get_left()) {
+                rotateRight(node,parent);
+                node = parent;    
+            }
 
-        // case 4: parent is right child of grandparent and node is right child of parent
-        //       G=B                 P=B
-        //      /   \               /   \ 
-        //     U=B   P=R    =>     G=R   N*
-        //          /   \         /  \ 
-        //         C     N*      U=B   C
-        if(parent == grandparent->get_right() && node == parent->get_right()) {
-            parent->set_black();
-            grandparent->set_red();
-            rotateLeft(parent,grandparent);
-            //addFixup(parent);
-            node = parent;
-        }
+            // case 4: parent is right child of grandparent and node is right child of parent
+            //       G=B                 P=B
+            //      /   \               /   \ 
+            //     U=B   P=R    =>     G=R   N*
+            //          /   \         /  \ 
+            //         C     N*      U=B   C
+            if(parent == grandparent->get_right() && node == parent->get_right()) {
+                parent->set_black();
+                grandparent->set_red();
+                rotateLeft(parent,grandparent);
+                //addFixup(parent);
+                node = parent;
+            }
         }
     }
     // Swap the child of a parent from A to B

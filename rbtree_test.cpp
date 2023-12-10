@@ -522,6 +522,7 @@ TEST_CASE("Tree with all possible combinations of 3 eles 5,7,11 passes black tes
     }
 }
 
+
 TEST_CASE("fixup on 3 ele LL tree") {
     rbtree tree;
     rbnode* gp = tree.insert_raw(11);
@@ -930,7 +931,7 @@ TEST_CASE("fixup on left-right case where gp has ancestor") {
 
 }
 
-TEST_CASE("fixup on right-left case where gp has ancestor") {
+TEST_CASE("fixup on right-left case where gp has ancestor","[.historic]") {
     rbtree  tree;
     rbnode* a = tree.insert_raw(13);
     rbnode* gp = tree.insert_raw(9);
@@ -969,7 +970,7 @@ TEST_CASE("fixup on right-left case where gp has ancestor") {
 
 }
 
-TEST_CASE("fixup on right-right case where gp has ancestor") {
+TEST_CASE("fixup on right-right case where gp has ancestor","[.historic]") {
     rbtree  tree;
     rbnode* a = tree.insert_raw(13);
     rbnode* gp = tree.insert_raw(9);
@@ -1004,6 +1005,17 @@ TEST_CASE("fixup on right-right case where gp has ancestor") {
 
     //REQUIRE(tree.no_adjacent_red_test());
     //REQUIRE(tree.black_depth_test());
+}
+
+TEST_CASE("insert and fixup 13 9 11 7 5 8") {
+    int vals[] ={13, 9, 11, 7, 5, 8};
+    rbtree  tree;
+
+    for(auto val:vals) {
+        tree.insert(val);
+        REQUIRE(tree.no_adjacent_red_test());
+        REQUIRE(tree.black_depth_test());
+    }
 }
 
 TEST_CASE("insert & fixup on 3 5 7 9") {
