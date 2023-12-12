@@ -1,6 +1,6 @@
 #include <iostream>
 #include<vector>
-#include <limits>
+#include <climits>
 enum rbcolor { red, black };
 
 class rbnode {
@@ -33,6 +33,18 @@ public:
             } else {
                 return right->insert_raw(val);
             }
+        }
+    }
+    void clear() {
+        if(left != nullptr) {
+            left->clear();
+            delete left;
+            left = nullptr;
+        }
+        if(right != nullptr) {
+            right->clear();
+            delete right;
+            right = nullptr;
         }
     }
 
@@ -467,6 +479,14 @@ void addFixup(rbnode* u) {
         grandparent->set_parent(parent);
         if(sibling != nullptr) {
             sibling->set_parent(grandparent);
+        }
+    }
+
+    void clear() {
+        if(root != nullptr) {
+            root->clear();
+            delete root;
+            root = nullptr;
         }
     }
 };

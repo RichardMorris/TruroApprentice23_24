@@ -30,6 +30,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 add_executable(graph_test testingcode.cpp weighted_graph.cpp)
 #add_executable(btree_test btree_test.cpp)
 add_executable(rbtree_test rbtree_test.cpp)
+add_executable(rbtree_main rbtree_main.cpp)
 
 # These tests can use the Catch2-provided main
 target_link_libraries(graph_test PRIVATE Catch2::Catch2WithMain)
