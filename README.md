@@ -47,3 +47,7 @@ Ensure the CMake tools are installed.
 Bring up the pallet Ctrl-Shift-P
 
 Type `CMake: build` or `CMake: run tests`
+
+# Red-Black Trees
+
+This follows the left-leaning Red-Black tree from https://opendatastructures.org/versions/edition-0.1e/ods-java/9_2_RedBlackTree_Simulated_.html
